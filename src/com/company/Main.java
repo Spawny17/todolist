@@ -1,12 +1,13 @@
 package com.company;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        ToDoList list = new ToDoList();
+    public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
+        ToDoList list = new ToDoList();
 
         while(true){
             System.out.println("Please select what you wish to do: \n" +
@@ -16,49 +17,43 @@ public class Main {
                     "Select 4 to close the application\n");
             int input = Integer.valueOf(scanner.nextLine());
 
-            if(input == 1){
-                System.out.println("\nYou currently have " + list.listSize() + " tasks to complete.");
-                for(int i = 0; i < list.listSize(); i++){
-                    System.out.println(list.listIndex(i));
-                }
+            if(input == 1){ // View the list of tasks within the To-Do List table
+                list.returnRows();
                 System.out.println("");
-            } else if(input == 2){
+            } else if(input == 2){ // Adds to the task list
                 while(true) {
-
-                    System.out.println("Please write the task you wish to add to the list or press Q to exit.");
-                    String newInput = scanner.nextLine();
-
-                    if (newInput.equals("Q")) {
+                    System.out.println("Please write the task you wish to add, the date it is due by and the priority or press Q to exit.");
+                    System.out.println("The task name: ");
+                    String newTask = scanner.nextLine();
+                    if (newTask.equals("Q")) {
                         System.out.println("You have opted to finish adding tasks.\n");
                         break;
                     }
+                    System.out.println("The date it is due by (in YYYY-MM-DD format).");
+                    String newDate = scanner.nextLine();
 
-                    list.addItem(newInput);
+                    System.out.println("Is this a priority? (1 = true or 0 = false)");
+                    int newPriority = Integer.valueOf(scanner.nextLine());
+
+                    list.addRows(newTask, newDate, newPriority);
+
+                    System.out.println("Task completed");
                 }
-            } else if (input == 3){
-                while(true) {
-                    if(list.listSize() == 0){
-                        System.out.println("There are no more tasks to delete.\n");
+            } else if (input == 3) {//Remove rows from todolist table
+                while (true) {
+                    System.out.println("Please select the number that corresponds to the task you wish to delete (or press Q to quit.\n");
+                    list.returnRows();
+
+                    String deletedInput = scanner.nextLine();
+
+                    if (deletedInput.equals("Q")) {
+                        System.out.println("You have opted to quit.");
                         break;
-                    } else {
-                        System.out.println("Please select the number that corresponds to the task you wish to delete (or press Q to quit.\n");
-                        for (int i = 0; i < list.listSize(); i++) {
-                            System.out.println(i + " - " + list.listIndex(i));
-                        }
-
-                        String deletedInput = scanner.nextLine();
-
-                        if (deletedInput.equals("Q")) {
-                            System.out.println("You have opted to quit.");
-                            break;
-                        }
-
-                        int deletedNumber = Integer.valueOf(deletedInput);
-
-                        System.out.println("\nYou have successfully deleted the task " + list.listIndex(deletedNumber) + ".");
-                        list.removeItem(deletedNumber);
-
                     }
+
+                    int deletedNumber = Integer.valueOf(deletedInput);
+                    System.out.println("\nYou have successfully deleted the task");
+                    list.deleteRows(deletedNumber);
                 }
             } else if (input == 4){
                 System.out.println("Thank you for using the application, please use it again soon!");
